@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+hw2_data 
+
+*.pkl
+
+*.pth
+
+.DS_Store
+
+*.zip
+*.docx
+output
+experiment

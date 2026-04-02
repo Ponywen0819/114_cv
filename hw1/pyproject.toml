@@ -1,0 +1,10 @@
+[project]
+name = "hw1-material"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy==1.21.6",
+    "opencv-python==4.6.0.66",
+]

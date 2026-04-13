@@ -34,6 +34,11 @@ def get_dataloader(dataset_dir, batch_size: int = 1, split: str = "test"):
                 transforms.Resize((32, 32)),
                 ##### TODO: Data Augmentation Begin #####
                 transforms.RandomRotation(45),
+                transforms.RandomHorizontalFlip(),
+                transforms.RandomVerticalFlip(),
+                transforms.ColorJitter(
+                    brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5
+                ),
                 ##### TODO: Data Augmentation End #####
                 transforms.ToTensor(),
                 transforms.Normalize(

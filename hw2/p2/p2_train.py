@@ -52,20 +52,30 @@ def plot_learning_curve(logfile_dir: str, result_lists: list):
     ################################################################
 
     epochs = range(1, len(result_lists["train_acc"]) + 1)
-    plt.figure(figsize=(12, 5))
-    plt.subplot(1, 2, 1)
-    plt.plot(epochs, result_lists["train_acc"], label="Train Accuracy")
-    plt.xlabel("Epoch")
-    plt.ylabel("Accuracy")
-    plt.title("Training Accuracy")
-    plt.legend()
+    fig, axes = plt.subplots(2, 2, figsize=(12, 5))
+    axes[0, 0].plot(epochs, result_lists["train_acc"], label="Train Accuracy")
+    axes[0, 0].set_xlabel("Epoch")
+    axes[0, 0].set_ylabel("Accuracy")
+    axes[0, 0].set_title("Training Accuracy")
+    axes[0, 0].legend()
 
-    plt.subplot(1, 2, 2)
-    plt.plot(epochs, result_lists["train_loss"], label="Train Loss")
-    plt.xlabel("Epoch")
-    plt.ylabel("Loss")
-    plt.title("Training Loss")
-    plt.legend()
+    axes[0, 1].plot(epochs, result_lists["train_loss"], label="Train Loss")
+    axes[0, 1].set_xlabel("Epoch")
+    axes[0, 1].set_ylabel("Loss")
+    axes[0, 1].set_title("Training Loss")
+    axes[0, 1].legend()
+
+    axes[1, 0].plot(epochs, result_lists["val_acc"], label="Validation Accuracy")
+    axes[1, 0].set_xlabel("Epoch")
+    axes[1, 0].set_ylabel("Accuracy")
+    axes[1, 0].set_title("Validation Accuracy")
+    axes[1, 0].legend()
+
+    axes[1, 1].plot(epochs, result_lists["val_loss"], label="Validation Loss")
+    axes[1, 1].set_xlabel("Epoch")
+    axes[1, 1].set_ylabel("Loss")
+    axes[1, 1].set_title("Validation Loss")
+    axes[1, 1].legend()
 
     plt.tight_layout()
     plt.savefig(os.path.join(logfile_dir, "learning_curve.png"))
@@ -168,11 +178,11 @@ def train(
                 val_correct += torch.sum(torch.argmax(pred, dim=1) == labels)
                 val_loss += loss.item()
             # Print validation result
-            val_time = time.time() - val_start_time
-            val_acc = val_correct / len(val_loader.dataset)
-            val_loss /= len(val_loader)
-            val_acc_list.append(val_acc.cpu().numpy())
-            val_loss_list.append(val_loss)
+            # val_time = time.time() - val_start_time
+            # val_acc = val_correct / len(val_loader.dataset)
+            # val_loss /= len(val_loader)
+            # val_acc_list.append(val_acc.cpu().numpy())
+            # val_loss_list.append(val_loss)
             ######################### TODO End ##########################
 
         # Print validation result

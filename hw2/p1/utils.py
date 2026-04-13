@@ -68,6 +68,16 @@ def get_tiny_images(img_paths: str):
 
     for img_path in tqdm(img_paths):
         img = Image.open(img_path).convert("L")
+        h, w = img.size
+        min_dim = min(h, w)
+        img = img.crop(
+            (
+                (w - min_dim) // 2,
+                (h - min_dim) // 2,
+                (w + min_dim) // 2,
+                (h + min_dim) // 2,
+            )
+        )
         img = img.resize((16, 16))
         img = np.array(img).flatten()
         img = img / np.linalg.norm(img)
@@ -265,11 +275,9 @@ def nearest_neighbor_classify(
 
     test_predicts = []
     for test_feat in tqdm(test_img_feats):
-        distances = cdist(
-            test_feat.reshape(1, -1), train_img_feats, metric="minkowski", p=0.5
-        )
+        distances = cdist(test_feat.reshape(1, -1), train_img_feats)
         nearest_neighbors = np.argsort(distances)[0][
-            :200
+            :10
         ]  # Get indices of 10 nearest neighbors
         nearest_labels = [CAT2ID[train_labels[i]] for i in nearest_neighbors]
         # Vote for the final label

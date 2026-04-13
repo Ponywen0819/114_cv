@@ -19,7 +19,7 @@ model_type = "mynet"  # 'mynet' or 'resnet18'
 
 # Learning Options
 epochs = 100  # train how many epochs
-batch_size = 64  # batch size for dataloader
+batch_size = 256  # batch size for dataloader
 use_adam = True  # Adam or SGD optimizer
-lr = 1e-2  # learning rate
+lr = 1e-3  # learning rate
 milestones = [16, 32, 45]  # reduce learning rate at 'milestones' epochs

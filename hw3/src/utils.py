@@ -129,18 +129,68 @@ def warping(src, dst, H, ymin, ymax, xmin, xmax, direction="b"):
         target_points = H @ points
         target_points /= target_points[2:3, :]
 
+        target_xs = target_points[0]
+        target_ys = target_points[1]
+        source_pixels = src[
+            points[1].astype(int), points[0].astype(int)
+        ].astype(np.float64)
+
+        finite_mask = np.isfinite(target_xs) & np.isfinite(target_ys)
+        target_xs = target_xs[finite_mask]
+        target_ys = target_ys[finite_mask]
+        source_pixels = source_pixels[finite_mask]
+
+        if target_xs.size == 0:
+            return dst
+
+        x0 = np.floor(target_xs).astype(int)
+        y0 = np.floor(target_ys).astype(int)
+        x1 = x0 + 1
+        y1 = y0 + 1
+
+        wx1 = target_xs - x0
+        wy1 = target_ys - y0
+        wx0 = 1 - wx1
+        wy0 = 1 - wy1
+
+        neighbor_xs = np.concatenate([x0, x1, x0, x1])
+        neighbor_ys = np.concatenate([y0, y0, y1, y1])
+        weights = np.concatenate(
+            [wx0 * wy0, wx1 * wy0, wx0 * wy1, wx1 * wy1]
+        )
+        neighbor_pixels = np.tile(source_pixels, (4, 1))
+
         mask = (
-            (target_points[0] >= 0)
-            & (target_points[0] < w_dst)
-            & (target_points[1] >= 0)
-            & (target_points[1] < h_dst)
+            (neighbor_xs >= 0)
+            & (neighbor_xs < w_dst)
+            & (neighbor_ys >= 0)
+            & (neighbor_ys < h_dst)
+            & (weights > 0)
         )
 
-        target_points = target_points[:, mask]
-        source_points = points[:, mask]
+        if not np.any(mask):
+            return dst
 
-        dst[target_points[1].astype(int), target_points[0].astype(int)] = src[
-            source_points[1].astype(int), source_points[0].astype(int)
-        ]
+        accum = np.zeros((h_dst, w_dst, ch), dtype=np.float64)
+        weight_sum = np.zeros((h_dst, w_dst), dtype=np.float64)
+        valid_xs = neighbor_xs[mask]
+        valid_ys = neighbor_ys[mask]
+        valid_weights = weights[mask]
+
+        np.add.at(
+            accum,
+            (valid_ys, valid_xs),
+            neighbor_pixels[mask] * valid_weights[:, None],
+        )
+        np.add.at(weight_sum, (valid_ys, valid_xs), valid_weights)
+
+        filled = weight_sum > 0
+        interpolated = accum[filled] / weight_sum[filled][:, None]
+        if np.issubdtype(dst.dtype, np.integer):
+            dtype_info = np.iinfo(dst.dtype)
+            interpolated = np.clip(
+                np.rint(interpolated), dtype_info.min, dtype_info.max
+            )
+        dst[filled] = interpolated.astype(dst.dtype, copy=False)
 
     return dst

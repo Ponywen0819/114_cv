@@ -96,15 +96,34 @@ def warping(src, dst, H, ymin, ymax, xmin, xmax, direction="b"):
     points = points.reshape(3, -1)  # shape = (3, N)
 
     if direction == "b":
-        # TODO: 3.apply H_inv to the destination pixels and retrieve (u,v) pixels, then reshape to (ymax-ymin),(xmax-xmin)
+        # Apply H_inv to destination pixels and reshape back to the ROI.
+        dst_xs, dst_ys = np.meshgrid(np.arange(xmin, xmax), np.arange(ymin, ymax))
+        dst_points = np.stack(
+            [dst_xs, dst_ys, np.ones_like(dst_xs)], axis=0
+        ).reshape(3, -1)
 
-        # TODO: 4.calculate the mask of the transformed coordinate (should not exceed the boundaries of source image)
+        source_points = H_inv @ dst_points
+        source_points /= source_points[2:3, :]
+        source_xs = source_points[0].reshape(ymax - ymin, xmax - xmin)
+        source_ys = source_points[1].reshape(ymax - ymin, xmax - xmin)
 
-        # TODO: 5.sample the source image with the masked and reshaped transformed coordinates
+        # Keep only coordinates that are valid in both source and destination.
+        mask = (
+            (source_xs >= 0)
+            & (source_xs < w_src)
+            & (source_ys >= 0)
+            & (source_ys < h_src)
+            & (dst_xs >= 0)
+            & (dst_xs < w_dst)
+            & (dst_ys >= 0)
+            & (dst_ys < h_dst)
+        )
 
-        # TODO: 6. assign to destination image with proper masking
+        sampled_pixels = src[
+            source_ys[mask].astype(int), source_xs[mask].astype(int)
+        ]
 
-        pass
+        dst[dst_ys[mask], dst_xs[mask]] = sampled_pixels
 
     elif direction == "f":
         target_points = H @ points

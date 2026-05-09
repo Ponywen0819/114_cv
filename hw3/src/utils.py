@@ -12,7 +12,7 @@ def solve_homography(u, v):
     N = u.shape[0]
     H = None
 
-    if v.shape[0] is not N:
+    if v.shape[0] != N:
         print("u and v should have the same size")
         return None
     if N < 4:

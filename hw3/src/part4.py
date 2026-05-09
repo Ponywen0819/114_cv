@@ -48,12 +48,8 @@ def ransac_homography(src_pts, dst_pts, iterations=1000, threshold=5.0):
             continue
 
         mean_error = errors[inlier_mask].mean()
-        if (
-            inlier_count > best_inlier_count
-            or (
-                inlier_count == best_inlier_count
-                and mean_error < best_mean_error
-            )
+        if inlier_count > best_inlier_count or (
+            inlier_count == best_inlier_count and mean_error < best_mean_error
         ):
             best_H = H
             best_mask = inlier_mask
@@ -136,7 +132,8 @@ if __name__ == "__main__":
     # TODO: change the number of frames to be stitched
     FRAME_NUM = 3
     imgs = [
-        cv2.imread("resource/frame{:d}.jpg".format(x)) for x in range(1, FRAME_NUM + 1)
+        cv2.imread("../resource/frame{:d}.jpg".format(x))
+        for x in range(1, FRAME_NUM + 1)
     ]
     output4 = panorama(imgs)
     cv2.imwrite("output4.png", output4)

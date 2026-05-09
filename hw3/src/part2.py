@@ -69,7 +69,7 @@ def planarAR(REF_IMAGE_PATH, VIDEO_PATH):
 
 if __name__ == "__main__":
     # ================== Part 2: Marker-based planar AR========================
-    VIDEO_PATH = "resource/seq0.mp4"
+    VIDEO_PATH = "../resource/seq0.mp4"
     # TODO: you can change the reference image to whatever you want
-    REF_IMAGE_PATH = "resource/hehe.jpg"
+    REF_IMAGE_PATH = "../resource/hehe.jpg"
     planarAR(REF_IMAGE_PATH, VIDEO_PATH)

@@ -20,14 +20,14 @@ def transform(img, canvas, corners):
 
 if __name__ == "__main__":
     # ================== Part 1: Homography Estimation ========================
-    canvas = cv2.imread("resource/times.jpg")
+    canvas = cv2.imread("../resource/times.jpg")
 
     # TODO: 1.you can use whatever images you like, include these images in the img directory
-    img1 = cv2.imread("resource/img1.jpg")
-    img2 = cv2.imread("resource/img2.jpg")
-    img3 = cv2.imread("resource/img3.jpg")
-    img4 = cv2.imread("resource/img4.jpg")
-    img5 = cv2.imread("resource/img5.jpg")
+    img1 = cv2.imread("../resource/img1.jpg")
+    img2 = cv2.imread("../resource/img2.jpg")
+    img3 = cv2.imread("../resource/img3.jpg")
+    img4 = cv2.imread("../resource/img4.jpg")
+    img5 = cv2.imread("../resource/img5.jpg")
 
     canvas_corners1 = np.array([[749, 521], [883, 525], [883, 750], [750, 750]])
     canvas_corners2 = np.array([[1395, 511], [1564, 434], [1573, 1013], [1402, 1012]])
